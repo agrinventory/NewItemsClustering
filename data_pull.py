@@ -19,7 +19,10 @@ DRIVER={{SQL Server}};
 SERVER={server};
 DATABASE={database};
 UID={username};
-PWD={password}
+PWD={password};
+Encrypt=false;
+TrustServerCertificate=false;
+Connection Timeout=30;
 '''
 
 print(connection_string)
