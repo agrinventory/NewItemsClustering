@@ -25,26 +25,41 @@ TrustServerCertificate=false;
 Connection Timeout=30;
 '''
 
-print(connection_string)
+tables_to_fetch = ['dbo.items','dbo.item_detail','dbo.item_order_routes','dbo.mbe_item_standard','core.label','inv.item_label_link']
 
-# Establish a connection
-conn = pyodbc.connect(connection_string)
+try:
+    # Establish a connection
+    conn = pyodbc.connect(connection_string)
+    print("Connection successful!")
 
-# Create a cursor object
-cursor = conn.cursor()
+    # Define your SQL query
+    sql_query = 'SELECT * FROM dbo.items'
 
-# Write an SQL query
-sql_query = 'SELECT * FROM dbo.items'
+    # Create a cursor object
+    cursor = conn.cursor()
 
-# Execute the query
-cursor.execute(sql_query)
+    # Execute the query
+    cursor.execute(sql_query)
 
-# Fetch the data
-rows = cursor.fetchall()
+    # Fetch all rows
+    rows = cursor.fetchall()
 
-# Process and print the data
-for row in rows:
-    print(row)
+    # Extract column names from the cursor description
+    columns = [column[0] for column in cursor.description]
 
-# Close the connection
-conn.close()
+    # Create a list of dictionaries containing the data
+    data = [dict(zip(columns, row)) for row in rows]
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    # Create a DataFrame from the data
+    df = pd.DataFrame(data)
+
+    print(df.head(10))
+
+
+except pyodbc.Error as ex:
+    print("Connection failed: ", ex)
+
