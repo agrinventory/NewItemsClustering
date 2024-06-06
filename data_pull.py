@@ -68,3 +68,6 @@ for table in tables_to_fetch:
     except pyodbc.Error as ex:
         print("Connection failed: ", ex)
 
+
+
+print(dataframes)
