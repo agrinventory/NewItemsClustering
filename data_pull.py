@@ -24,42 +24,47 @@ Encrypt=false;
 TrustServerCertificate=false;
 Connection Timeout=30;
 '''
-
+dataframes = {}
 tables_to_fetch = ['dbo.items','dbo.item_detail','dbo.item_order_routes','dbo.mbe_item_standard','core.label','inv.item_label_link']
 
-try:
-    # Establish a connection
-    conn = pyodbc.connect(connection_string)
-    print("Connection successful!")
+for table in tables_to_fetch:
+    try:
+        # Establish a connection
+        conn = pyodbc.connect(connection_string)
+        print("Connection successful!")
 
-    # Define your SQL query
-    sql_query = 'SELECT * FROM dbo.items'
+        # Define your SQL query
+        sql_query = 'SELECT * FROM ' + table
 
-    # Create a cursor object
-    cursor = conn.cursor()
+        print(sql_query)
 
-    # Execute the query
-    cursor.execute(sql_query)
+        # Create a cursor object
+        cursor = conn.cursor()
 
-    # Fetch all rows
-    rows = cursor.fetchall()
+        # Execute the query
+        cursor.execute(sql_query)
 
-    # Extract column names from the cursor description
-    columns = [column[0] for column in cursor.description]
+        # Fetch all rows
+        rows = cursor.fetchall()
 
-    # Create a list of dictionaries containing the data
-    data = [dict(zip(columns, row)) for row in rows]
+        # Extract column names from the cursor description
+        columns = [column[0] for column in cursor.description]
 
-    # Close the cursor and connection
-    cursor.close()
-    conn.close()
+        # Create a list of dictionaries containing the data
+        data = [dict(zip(columns, row)) for row in rows]
 
-    # Create a DataFrame from the data
-    df = pd.DataFrame(data)
+        # Close the cursor and connection
+        cursor.close()
+        conn.close()
 
-    print(df.head(10))
+        # Create a DataFrame from the data
+        
+        df = pd.DataFrame(data)
+        dataframes[f'table'] = df
+
+        print(df.head(10))
 
 
-except pyodbc.Error as ex:
-    print("Connection failed: ", ex)
+    except pyodbc.Error as ex:
+        print("Connection failed: ", ex)
 
